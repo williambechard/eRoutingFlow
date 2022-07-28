@@ -1,0 +1,40 @@
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<style>
+#s4-ribbonrow{
+    display:none;
+}
+#onetIDListForm{
+    margin:auto;
+}
+.clickable{
+    cursor:pointer;
+}
+
+.clickable:hover{
+    color:black!important;
+}
+</style>
+<script>
+    $(document).ready(function(){
+        styleContactsForm();
+    });
+
+    function styleContactsForm(){
+
+        $($('#part1 input[name$="SaveItem"]')[1]).css('font-size', 'larger');
+        $($('#part1 input[name$="SaveItem"]')[1]).css('color', 'white');
+        $($('#part1 input[name$="SaveItem"]')[1]).css('background-color', 'green');
+        $($('#part1 input[name$="SaveItem"]')[1]).css('border-color', 'green');
+        $($('#part1 input[name$="SaveItem"]')[1]).css('border-radius', '10px');
+        $($('#part1 input[name$="SaveItem"]')[1]).addClass('clickable');
+    
+        $($('#part1 input[name$="GoBack"]')[1]).css('font-size', 'larger');
+        $($('#part1 input[name$="GoBack"]')[1]).css('color', 'white');
+        $($('#part1 input[name$="GoBack"]')[1]).css('background-color', 'red');
+        $($('#part1 input[name$="GoBack"]')[1]).css('border-color', 'red');
+        $($('#part1 input[name$="GoBack"]')[1]).css('border-radius', '10px');
+        $($('#part1 input[name$="GoBack"]')[1]).addClass('clickable');    
+
+        $('#onetidinfoblock1').closest('table').hide();
+    }
+</script>

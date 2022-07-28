@@ -1,0 +1,462 @@
+<!-- Script References / JS Libraries and CSS -->
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script lang="javascript" src="/teams/23840/SiteAssets/Scripts/SPHelper_v4.js"></script> <!--This will need to be your local path (IE wherever you stored this file in SP)-->
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/w3-css/4.1.0/w3.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+<!-- You will need to adjust the paths above to your enviornment/script location -->
+
+<style>
+    #s4-ribbonrow{
+        display:none;
+    }
+    #onetIDListForm{
+        margin:auto;
+    }
+    #actionArea{
+        vertical-align: baseline !important;
+    }
+    .eSSSTable td{
+    border: 1px solid black;
+}
+.mouseHand:hover{
+    cursor:pointer;
+}
+.btn:hover{
+    background-color: grey!important;
+}
+.btn{
+    min-width:40px!important;
+    max-width:40px;
+}
+.posButton{
+    background-color: limegreen;
+    border: 1px solid green;
+    color:white;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-bottom:1%;
+}
+.eSSSTable tbody > tr > td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow:hidden;
+}
+
+.eSSSTable th{
+    border:1px solid black;
+    background-color:gainsboro;
+}
+
+.eSSSTable tr:hover{
+    background-color: yellow!important;
+}
+
+#dt select{
+    width:-webkit-fill-available;
+}
+
+.lastDiv{
+    display:inline-block!important;
+}
+.clickable{
+    cursor:pointer;
+}
+#dt_filter{
+    display:none;
+}
+
+.clickable:hover{
+    color:black!important;
+}
+#bottomArea, #TitleArea{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-left:2%;
+    margin-right:2%;
+    margin-top:1%;
+    margin-bottom:1%;
+}
+
+.bottomChildren{
+    margin-left:1%;
+    margin-right:1%;
+    margin-top:1%;
+    margin-bottom:1%;
+    width:fit-content;
+    min-height: 300px;
+    height:auto;
+}
+#SaveCancelArea{
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top:1%;
+    margin-bottom:1%;
+    width:-webkit-fill-available;
+}
+
+.cardHeader{
+    background-color: grey;
+    color:white;
+    font-size: large;
+}
+
+.cardHeader textarea{
+    background-color: white;
+    color:black;
+    font-size: medium;
+}
+</style>
+
+
+
+<div class="w3-container w3-tile" style="margin-left:2%; margin-right:2%;">
+    <button type="button" id="newRoute" class="posButton btn" style="border:1px solid green; border-radius:10px; float:right; margin-bottom:1%;"><i class="fa fa-plus" aria-hidden="true"></i></button>
+    <table id="dt" class="w3-table-all eSSSTable">
+        <thead><tr></tr></thead>
+        <tbody></tbody>
+    </table>
+</div>
+<div class="w3-center w3-container" id="TitleArea" style="background-color:#E8E8E8; border:1px, solid, black;"></div>
+<div class="w3-center w3-container">
+    <div id="bottomArea">
+        <div class="bottomChildren w3-card cardHeader" id="PurposeArea"><div class="w3-center w3-header">Purpose</div></div>
+        <div class="bottomChildren w3-card cardHeader" id="BackgroundArea"><div class="w3-center w3-header">Background</div></div>
+        <div class="bottomChildren w3-card cardHeader" id="DiscussionArea"><div class="w3-center w3-header">Discussion</div></div>
+        <div class="bottomChildren w3-card cardHeader" id="RecommendationArea"><div class="w3-center w3-header">Recommendation</div></div>
+    </div>
+    <div class="w3-container" id="SaveCancelArea"></div>
+</div>
+
+
+
+<script>
+    var siteURL  = _spPageContextInfo.webAbsoluteUrl;
+    var Templates =[];
+    var targetLists = ['eRoutingContacts', 'eRoutingTemplates', 'eRouting'];
+    var allContacts = [];
+    var allActions = [];
+    var allRoutes = [];
+    
+
+$(document).ready(function(){
+    styleTemplateForm();
+    setupRoutingList();
+
+    $('#newRoute').on('click', function(){
+        console.log('newRoute clicked', allContacts);
+        allRoutes.push({
+            'To':'<select class="ToSelect"><option value=""></option>'+ allContacts.map(function(s){return '<option value="' + s.Id + '">' + s.Position + '</option>'}) + '</select>',
+            'Action':'<select class="ActionSelect"><option value=""></option>'+ allActions.map(function(s){return '<option value="' + s + '">' + s + '</option>'}) + '</select>',
+            'Pos':allRoutes.length,
+            'Id': 'Unsaved_' + allRoutes.length,
+            'SelectedTo':'',
+            'SelectedAction':''
+        });
+        $('#dt').dataTable().fnClearTable();
+        if (allRoutes.length > 0) $('#dt').dataTable().fnAddData(allRoutes.sort(function(a,b){return a.Pos>b.Pos ? 1 : -1}));
+        console.log('all routes ', allRoutes);
+    });
+
+    
+});
+
+function styleTemplateForm(){
+    $('#RoutingList').closest('tr').hide();
+    $('textarea[title^="JSON"]').closest('tr').hide();
+    $('#PurposeArea').append($('textarea[title^="Purpose"]').css('height','300px'));
+    $('#BackgroundArea').append($('textarea[title^="Background"]').css('height','300px'));
+    $('#DiscussionArea').append($('textarea[title^="Discussion"]').css('height','300px'));
+    $('#RecommendationArea').append($('textarea[title^="Recommendation"]').css('height','300px'));
+    $('#TitleArea').append($('input[title^="Title"]').closest('tr'));
+    $('#Purpose').closest('tr').hide();
+    $('#Background').closest('tr').hide();
+    $('#Discussion').closest('tr').hide();
+    $('#Recommendation').closest('tr').hide();
+
+    $($('#part1 input[name$="SaveItem"]')[1]).css('font-size', 'larger');
+    $($('#part1 input[name$="SaveItem"]')[1]).css('color', 'white');
+    $($('#part1 input[name$="SaveItem"]')[1]).css('background-color', 'green');
+    $($('#part1 input[name$="SaveItem"]')[1]).css('border-color', 'green');
+    $($('#part1 input[name$="SaveItem"]')[1]).css('border-radius', '10px');
+    $($('#part1 input[name$="SaveItem"]')[1]).addClass('clickable');
+    
+    $($('#part1 input[name$="GoBack"]')[1]).css('font-size', 'larger');
+    $($('#part1 input[name$="GoBack"]')[1]).css('color', 'white');
+    $($('#part1 input[name$="GoBack"]')[1]).css('background-color', 'red');
+    $($('#part1 input[name$="GoBack"]')[1]).css('border-color', 'red');
+    $($('#part1 input[name$="GoBack"]')[1]).css('border-radius', '10px');
+    $($('#part1 input[name$="GoBack"]')[1]).addClass('clickable');    
+
+    $('#SaveCancelArea').append($($('#part1 input[name$="SaveItem"]')[1]));
+    $('#SaveCancelArea').append($($('#part1 input[name$="GoBack"]')[1]));
+
+    
+    $('#part1').hide();
+}
+
+function setupRoutingList(){
+    var allListPromises = [];
+
+    //get data from Contacts List
+    allListPromises.push(
+        SPHGetListItems(targetLists[0] , '?$select=Id,Title,Person/Id,Person/Title&$expand=Person', siteURL).done(function (data) {
+        console.log('data from the %s list: %o ', targetLists[0], data);
+        // Mutate the data for the format that the DataTable can use
+        allContacts = data.map(function (i) {
+            return {
+                "Position": i.Title,
+                "Member": i.Person.Title,
+                "Id": i.Id
+            };
+        });
+        console.log('List %s now formatted for the DataTable: %o ', targetLists[0] ,  allContacts);
+    
+
+        }).fail(function (e) {
+            alert('Failed Getting List Items! ' + e.responseText);
+        })
+    );
+
+    // get Action Choice fields and store them in our allActions array
+    allListPromises.push(
+        SPHGetListColumns(targetLists[2], siteURL).done(function(data){
+            $('.ActionSelect').append(new Option('', ''));
+            $.each(data.filter(function(v,i){return v.Title=="Action"})[0].Choices.results, function(i,v){
+                allActions.push(v);
+            });
+        }).fail(function(e){ alert('Failed Getting List Items! ' + e.responseText);})
+    );
+
+    // get all template data for ensuring no duplicate names, and to also handle
+    //   adding data back in from the saved JSON
+    allListPromises.push(SPHGetListItems(targetLists[1], '?$select=Id,Title', siteURL).done(function(data){
+        $.each(data, function(i,v){
+            Templates.push(v.Title);
+        });
+    }));
+
+    $.when.apply($, allListPromises).done(function (d) {
+        console.log('Templates = ', Templates);
+        //data from JSON?
+        if($('textarea[id^="JSON"]').val()!=''){
+            allRoutes = JSON.parse($('textarea[id^="JSON"]').val()).map(
+                function(i){
+                    return {
+                    'To':'<select class="ToSelect"><option value=""></option>'+ allContacts.map(function(s){return '<option value="' + s.Id + '">' + s.Position + '</option>'}) + '</select>',
+                    'Action':'<select class="ActionSelect"><option value=""></option>'+ allActions.map(function(s){return '<option value="' + s + '">' + s + '</option>'}) + '</select>',
+                    'Pos':i.Pos,
+                    'Id': String(i.Pos),
+                    'SelectedTo':i.SelectedTo,
+                    'SelectedAction':i.SelectedAction
+                    }
+                }
+            );
+        }
+        console.log('allRoutes data ', allRoutes);
+        createDataTable('dt', allRoutes, ['To', 'Action', 'Pos']);
+    });
+}
+
+ //8. Helper for creating the DataTable(s)
+function createDataTable(targetElem, Data, Columns) {
+    var cData = Columns.map(function (v) {
+        //ensure that all data has a prop for every column
+        $.each(Data, function (item, value) {
+            if (!value.hasOwnProperty(v)) value[v] = '';
+        }); //now if the column has formatting, include that as well
+
+        return {'mData': v};
+    });
+    
+    console.log('cData = ', cData);
+    var targetTable = $('#' + targetElem); //create the Header/Footer
+
+    var tableHeader = targetTable.find('thead').find('tr');
+
+    $.each(Columns, function (index, value) {
+        tableHeader.append('<th>' + value + '</th>');
+    }); //create the actual data table
+
+    try {
+        targetTable.DataTable({
+            "bAutoWidth": true,
+            "fixedHeader":true,
+            "responsive":true,
+            "paging":false,
+            "info":false,
+            "aaSorting":[[1,"asc"]],
+            //we want to control the width of our columns specifically, if we were ok with a standardard width we could set this to true
+            "aaData": Data,
+            //this is the ajax data that we are passing in
+            "aoColumns": cData,
+            'rowCallback': function rowCallback(row, data) {
+                $($(row)[0]).attr('SPID', data.Id);
+
+                $($(row)[0]).addClass('mouseHand');
+
+                if ($($($(row)[0]).find('td:last')[0]).find('.lastDiv').length == 0) {
+                    $($($(row)[0]).find('td:last')[0]).wrapInner('<div class="lastDiv"></div>');
+                    $($($(row)[0]).find('td:last')[0]).append('<div class="deleteBTN" style="float:right" type="button" onclick="removeItem(this); return false;"><i style="color:red;" class="clickable fa fa-times fa-2x"></i></div>');
+                }
+
+                if(data.Id.substring(0,7)=="Unsaved"){
+                    console.log('unsaved ', $($(row)[0]).find('.lastDiv'));
+                    $($($(row)[0]).find('td:last')[0]).find('.lastDiv').text(data.Id.split("_")[1]);
+                }
+
+                $($($(row)[0]).find('.ToSelect')[0]).val(data.SelectedTo);
+                $($($(row)[0]).find('.ActionSelect')[0]).val(data.SelectedAction);
+                $($($(row)[0]).find('.lastDiv')[0]).text(data.Pos);
+            },
+        }); //console.error('allStyles', allStyles);
+
+        var fixHelper = function(e, ui) {
+            ui.children().each(function() {
+                $(this).width($(this).width());
+            });
+            return ui;
+        };
+
+        targetTable.find("tbody").sortable({
+            helper: fixHelper,
+            update: function(event, ui) {
+                targetTable.find("tbody tr").each(function(index){
+                    $($($(this)[0]).find('.lastDiv')[0]).text(index);
+                    var spid = $($(this)[0]).attr('spid');
+                    var targetRoute = allRoutes.filter(function(v){
+                        return v.Id == spid;
+                    });
+                    console.log('found targetRoute ', targetRoute);
+                    if(targetRoute.length>0){
+                        console.log('change index to ', index);
+                        targetRoute[0].Pos = index;
+                    }
+                });
+            }
+        }).disableSelection();
+
+        targetTable.on('change', '.ToSelect',function(){
+            console.log($(this).val());
+            var spid = $(this).closest('tr').attr('spid');
+            console.log('spid ', spid);
+            var targetRoute = allRoutes.filter(function(v){
+                return v.Id== spid;
+            });
+            console.log('tRoute', targetRoute);
+            if(targetRoute.length>0){
+                targetRoute[0].SelectedTo = $(this).val();
+            }
+        });
+
+        targetTable.on('change', '.ActionSelect', function(){
+            console.log($(this).val());
+            var spid = $(this).closest('tr').attr('spid');
+            console.log('spid ', spid);
+            var targetRoute = allRoutes.filter(function(v){
+                return v.Id==spid;
+            });
+            console.log('tRoute', targetRoute);
+            if(targetRoute.length>0){
+                targetRoute[0].SelectedAction = $(this).val();
+            }
+        });
+
+        console.log('targetTable', targetTable);   
+        
+        $('#' + targetElem + '_wrapper').css('margin-top', '2%');
+
+        targetTable.on('click', 'tbody tr', function(e) {
+            //console.log('API row values : ', targetTable.DataTable().row(this).data());
+            if (!$(e.target).is('button') && !$(e.target).is('i')) {
+
+            }
+        });
+    } catch (e) {
+    console.log('error ' + e);
+    }
+}
+
+//7. Helps Delete Item from DataTable (and List)
+function removeItem(e) {
+    var id = $(e).closest('tr').attr('spid');
+    var list = targetLists[1];
+
+    if(id.substring(0,7)!='Unsaved'){
+        SPHDeleteListItem(list, id, siteURL).done(function (data) {}).fail(function (e) {
+            alert('Failed Deleting Item! ' + e.responseText);
+        });
+    }
+
+    var index = allRoutes.indexOf(allRoutes.filter(function(v){return v.Id==id}));
+        allRoutes.splice(index, 1);
+        $('#dt').dataTable().fnClearTable();
+        if (allRoutes.length > 0) $('#dt').dataTable().fnAddData(allRoutes);
+   
+}
+
+function PreSaveAction() 
+{
+    var noAction = false;
+    var allActions = [];
+
+    $.each(allRoutes, function(i,v){
+        if(v.SelectedAction=='') noAction=true; 
+    });
+
+    if(noAction) alert("WARNING you must select an Action for each Route");
+    else{
+
+        $.each(allRoutes, function(i,v){
+            if(v.SelectedTo=='') noAction=true; 
+        });
+
+        if(noAction) alert("WARNING you must select an To for each Route");
+        else{
+
+            var onEditForm = (window.location.href.indexOf("Id") > -1);
+
+            if (!onEditForm) {
+                $.each(Templates, function(i,v){
+                    console.log('v = ', v);
+                    if(v==$('input[id^="Title"]').val()){
+                        //match exists 
+                        alert('WARNING Title already exists in another Template! Please choose a unique Template Title');
+                        noAction=true
+                        return false;
+                    }
+                });
+            }
+        }
+    }
+    
+    if(noAction==false){
+        $('textarea[id^="JSON"]').val(
+            JSON.stringify(
+                allRoutes.sort(function(a,b){return a.Pos > b.Pos ? 1 : -1}).map(
+                    function(i){
+                        return{
+                            'Pos':i.Pos,
+                            'SelectedTo':i.SelectedTo,
+                            'SelectedAction':i.SelectedAction
+                        }
+                    }
+                )
+            )
+        );
+        console.log('JSON = ', $('textarea[id^="JSON"]').val());
+    }
+    console.log('allRoutes R: ', allRoutes);
+
+    return !noAction;
+    
+}
+
+</script>

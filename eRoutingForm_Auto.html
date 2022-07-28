@@ -1,0 +1,919 @@
+<!-- Script References / JS Libraries and CSS -->
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script lang="javascript" src="/teams/23840/SiteAssets/Scripts/SPHelper_v4.js"></script> <!--This will need to be your local path (IE wherever you stored this file in SP)-->
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/w3-css/4.1.0/w3.min.css">
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="/_layouts/15/clientpeoplepicker.js"></script>
+<!-- You will need to adjust the paths above to your enviornment/script location -->
+<style>
+    button:hover{
+        cursor: pointer;
+    }
+    .alert{
+        background-color: red!important;
+    }
+    #s4-ribbonrow{
+        display: none;
+    }
+    *,*:before,*:after{
+        box-sizing: unset!important;
+    }
+
+    .dataTables_scrollFoot{
+        overflow: unset!important;
+    }
+
+html.w3, body.w3{
+    font-size:unset;
+}
+
+#AttachmentsButton{
+
+    margin:4%;
+
+}
+
+#contentBox{
+	margin-left:auto;
+	margin-right:auto;
+}
+
+#sideNavBox{
+	display:none;
+}
+
+textarea {
+  resize: none;
+  width:-webkit-fill-available !important;
+  height:175px;
+
+}
+
+/* Center the loader */
+.loader {
+  position:fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+.greyOut{
+    position: absolute;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,.25);
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#modalRouting{
+    padding:2%;
+}
+.fullHeight{
+    height:100%;
+}
+.eSSSTable td{
+    border: 1px solid black;
+}
+.eSSSTable th{
+    border:2px solid black;
+    background-color:grey;
+}
+
+.eSSSTable{
+    border: 3px solid black;
+}
+
+.stretchDiv div{
+    display: inline-block;
+}
+.eSSSLabel{
+ width:100%;
+ background-color: gainsboro;
+}
+
+.eSSSInput{
+    width:96%;
+}
+.matchWidth{
+    width:-webkit-fill-available;
+    height:170px;
+}
+
+.bodyHeight{
+   height:200px;
+}
+ 
+.highlightRow{
+    background-color: yellow!important;
+}
+.posButton{
+    background-color: limegreen;
+    border: 1px solid green;
+    color:white;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.negButton{
+    background-color: orangered;
+    border: 1px solid red;
+    color:white;
+}
+
+
+.clickable{
+    cursor:pointer;
+}
+
+.clickable:hover{
+    color:black!important;
+}
+
+.PosSelect, .ActionSelect{
+    width:-webkit-fill-available;
+}
+
+.eSSSTable{
+    table-layout: fixed;
+}
+
+.NameField, .SigField{
+    height:1.5em; 
+    overflow:hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.SigField{
+    height:2em;
+    font-family:monospace;
+    font-size:large;
+    color:white;
+    background-color:darkgrey;
+    text-align: center;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.ms-dlgOverlay{
+    height:unset!important;
+    width:auto!important;
+ }
+
+.NameField{
+    background-color: gainsboro;
+}
+
+.eSSSTable input{
+    width:-webkit-fill-available;
+}
+.commentButton{
+    border-radius: 4px;
+}
+.sigButton{
+    width:63%;
+    color:blue;
+    border-radius: 4px;
+}
+
+.sigButton:hover{
+    cursor:pointer;
+}
+#AttachmentsArea{
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content:center;
+    font-size: xx-large!important;
+}
+#idAttachmentsRow{
+    width:-webkit-fill-available !important;
+}
+#idAttachmentsTable{
+    text-align:left;
+    margin-left:20px;
+}
+#Attachments{
+    color:blue;
+}
+
+.commentHeader{
+    font-size:xx-large;
+    font-weight: bold;
+    font-family:monospace;
+    padding:20px;
+    background-color: lightgrey;
+}
+
+.commentFooter{
+    font-size: large;
+    color:darkorange;
+    padding:10px;
+}
+</style>
+
+<div id="modalRouting" style="height:80%;">
+    <div class="w3-center"><span style="color:red">WARNING</span> <span style="color:black"> You Cannot Use Internet Explorer for this Form to work.</span></div>
+    <div class="w3-row w3-card" style="padding:1%;height:95%;">
+        <div id='routingTemplates' class="w3-quarter w3-center fullHeight">
+            <div class="w3-container w3-card w3-grey fullHeight">
+                <div class="w3-container" style="margin-top:4%; margin-bottom:2%;">
+                    <label>Routing Templates</label>
+                    <select id="rTemplates">
+                        <option>Manual</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="w3-threequarter w3-center fullHeight">
+            <div id="routingForm" class="w3-container w3-light-grey fullHeight" style="padding-bottom:2%;">
+                <div class="w3-card fullHeight" style="overflow-y: auto;">
+                    <table style="margin:auto;">
+                        <tbody> 
+                            <tr>
+                                <td>
+                                    <table class="w3-table-all eSSSTable" style="table-layout: fixed;">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:10%;">#</th>
+                                                <th style="width:20%;">TO</th>
+                                                <th style="width:20%;">ACTION</th>
+                                                <th style="width:50%;">SIGNATURE (Surname), GRADE AND DATE</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td><select class="PosSelect"></select></td>
+                                                <td><select class="ActionSelect"></select></td>
+                                                <td>
+                                                    <div class="NameField"></div><div class="SigField"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td><select class="PosSelect"></select></td>
+                                                <td><select class="ActionSelect"></select></td>
+                                                <td>
+                                                    <div class="NameField"></div><div class="SigField"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td><select class="PosSelect"></select></td>
+                                                <td><select class="ActionSelect"></select></td>
+                                                <td>
+                                                    <div class="NameField"></div><div class="SigField"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>4</td>
+                                                <td><select class="PosSelect"></select></td>
+                                                <td><select class="ActionSelect"></select></td>
+                                                <td>
+                                                    <div class="NameField"></div><div class="SigField"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>5</td>
+                                                <td><select class="PosSelect"></select></td>
+                                                <td><select class="ActionSelect"></select></td>
+                                                <td>
+                                                    <div class="NameField"></div><div class="SigField"></div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td>
+                                    <table class="w3-table-all eSSSTable" style="transform:translateX(-3px); table-layout: fixed;">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:10%;">#</th>
+                                                <th style="width:20%;">TO</th>
+                                                <th style="width:20%;">ACTION</th>
+                                                <th style="width:50%;">SIGNATURE (Surname), GRADE AND DATE</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>6</td>
+                                                <td><select class="PosSelect"></select></td>
+                                                <td><select class="ActionSelect"></select></td>
+                                                <td>
+                                                    <div class="NameField"></div><div class="SigField"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>7</td>
+                                                <td><select class="PosSelect"></select></td>
+                                                <td><select class="ActionSelect"></select></td>
+                                                <td>
+                                                    <div class="NameField"></div><div class="SigField"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>8</td>
+                                                <td><select class="PosSelect"></select></td>
+                                                <td><select class="ActionSelect"></select></td>
+                                                <td>
+                                                    <div class="NameField"></div><div class="SigField"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>9</td>
+                                                <td><select class="PosSelect"></select></td>
+                                                <td><select class="ActionSelect"></select></td>
+                                                <td>
+                                                    <div class="NameField"></div><div class="SigField"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>10</td>
+                                                <td><select class="PosSelect"></select></td>
+                                                <td><select class="ActionSelect"></select></td>
+                                                <td>
+                                                    <div class="NameField"></div><div class="SigField"></div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                <table class="w3-table-all eSSSTable" style="width:99.8%; transform:translate(.5px, -4px);">
+                                    <tbody>
+                                        <tr style="width:100%;">
+                                            <td class="w3-center" style="width:35%;">
+                                                <div class="eSSSLabel">
+                                                    <div>Action Officer</div>
+                                                    <div id="targetAO"></div>
+                                                </div>
+                                            </td>
+                                            <td class="w3-center" style="width:15%;">
+                                                <div class="eSSSLabel">
+                                                    <div>Symbol</div>
+                                                    <div id="targetSymbol"></div>
+                                                </div>
+                                            </td>
+                                            <td class="w3-center" style="width:20%;">
+                                                <div class="eSSSLabel">
+                                                    <div>Phone</div>
+                                                    <div id="targetPhone"></div>
+                                                </div>
+                                            </td>
+                                            <td class="w3-center" style="width:10%;">
+                                                <div class="eSSSLabel">
+                                                    <div>Initials</div>
+                                                    <div id="targetInitials"></div>
+                                                </div>
+                                            </td>
+                                            <td class="w3-center" style="width:20%;">
+                                                <div class="eSSSLabel">
+                                                    <div>Suspense</div>
+                                                    <div id="targetSuspense"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w3-center" colspan="4">
+                                                <div class="eSSSLabel">
+                                                    <div>SUBJECT</div>
+                                                    <div id="targetSubject"></div>
+                                                </div>
+                                            </td>
+                                            <td class="w3-center">
+                                                <div class="eSSSLabel">
+                                                    <div>Date</div>
+                                                    <div id="targetDate"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5">
+                                                <div class="eSSSLabel bodyHeight">
+                                                    <div>1. PURPOSE</div>
+                                                    <div id="PurposeArea"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5">
+                                                <div class="eSSSLabel bodyHeight">
+                                                    <div>2. BACKGROUND</div>
+                                                    <div id="BackgroundArea"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5">
+                                                <div class="eSSSLabel bodyHeight">
+                                                    <div>3. DISCUSSION</div>
+                                                    <div id="DiscussionArea"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5">
+                                                <div class="eSSSLabel bodyHeight">
+                                                    <div>4. RECOMMENDATION</div>
+                                                    <div id="RecommendationArea"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="float:right; margin:10px;">
+                        <input type="button" id="AttachmentsButton" onclick="javascript:UploadAttachment();" value="Attachment(s)">
+                        <div id="AttachmentsArea"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="commentModal" class="modal" style="height:70%;">
+    <div class="w3-card" style="height:-webkit-fill-available;">
+        <div class="w3-container commentHeader">Please type Comments below:</div>
+        <textarea id="commentArea" style="height:60%;"></textarea>
+        <div class="w3-panel commentFooter" >Note: If comments are used an Email will be sent to the AO with the comments attached (Even if the Sign Button is used).
+            If you do not wish to send Comments, then please ensure that there is no text in the Comments Field above.</div>
+        <div class="w3-right" style="padding-right:10px;">   
+            <button onclick="$.modal.close(); return false;" class="clickable w3-button w3-red" type="button">Cancel</button>
+            <button onclick="saveComments(); return false;" class="clickable w3-button w3-green" type="button">Ok</button>
+        </div>
+    </div>
+</div>
+
+<script>
+var listNames=['eRoutingContacts', 'eRoutingTemplates', 'eRouting'];
+var allContacts=[];
+var siteURL = _spPageContextInfo.webAbsoluteUrl;
+var allTitles = [];
+//var targetLists = ['eRoutingContacts', 'eRouting'];
+var path = window.location.pathname;
+var page = path.split("/").pop().split('.')[0];
+//var allPos = {};
+//var SPAllPos = {};
+var Templates = [];
+allRoutings = [];
+
+// 1. Entry Point to the Program
+// This is run once the DOM is finished loading
+$(document).ready(function () {
+    console.log('The DOM is done, we are now in $(document).ready()');
+    console.log('Determine if we are in NewForm or EditForm/Disp Form');
+    //In order to use the same code for NewForm and Edit form we need a way to determine
+    //  which one we are in. The simplist way (other than checking the url) is to see if
+    //  the JSON field already has data. If it doesnt, then we are in NewForm  
+    if ($('textarea[id^="JSON"]').val() != '') {
+        console.log('We are in EditForm/DispForm');
+        lockDownForm();
+    }else console.log('We are in NewForm');
+
+    //Style the form to look like an eSSS Form
+    styleRoutingForm();
+    //Fill out the Routing Templates Drop Down
+    setupRoutingTemplates();
+    //Setup all our events that we define using JQUERY
+    setupEventHooks();
+    //Setup our Contacts into the Position Selects
+    setupRoutingContacts();
+});
+
+// If Form is not in New Form we want to disable/hide certain fields
+function lockDownForm(){
+    console.log('Lock down the form (so certain edits cannot be made), and hide the Templates selector.');
+    $('#routingTemplates').hide();
+    $('.w3-threequarter').removeClass('w3-threequarter'); //disabled drop down fields
+    $('.PosSelect').prop('disabled', true);
+    $('.ActionSelect').prop('disabled', true);
+}
+
+// This handles the styling of the form
+function styleRoutingForm(){
+    //$('#Title').closest('tr').hide();
+
+    $('#PurposeArea').append($('textarea[title^="Purpose"]'));
+    $('#BackgroundArea').append($('textarea[title^="Background"]'));
+    $('#DiscussionArea').append($('textarea[title^="Discussion"]'));
+    $('#RecommendationArea').append($('textarea[title^="Recommendation"]'));
+    $('#targetAO').append($('div[title="AO"]').closest('div'));
+    $('div[title="AO"]').closest('div').css('width', 'auto');
+    $('#targetSymbol').append($('select[title="Symbol"]').css('width', '-webkit-fill-available'));
+    $('#targetPhone').append($('input[title^="Phone"]').css('width', '-webkit-fill-available'));
+    $('#targetInitials').append($('input[title^="Initials"]').css('width', '-webkit-fill-available'));
+    $('#targetSubject').append($('input[title^="Subject"]').css('width', '-webkit-fill-available'));
+    $('#targetSuspense').append($('input[title^="Suspense"]').closest('table').css('width', 'fit-content'));
+    $('#targetDate').append($('input[title^="Date"]').closest('table').css('width', 'fit-content'));
+    $($('input[title^="Suspense"]').closest('table').find('td')[2]).css('width', '0px');
+    $($('input[title^="Suspense"]').closest('table').find('td')[1]).css('width', '20px');
+    $('input[title^="Suspense"]').closest('table').css('table-layout', 'fixed');
+    $($('input[title^="Date"]').closest('table').find('td')[2]).css('width', '0px');
+    $($('input[title^="Date"]').closest('table').find('td')[1]).css('width', '20px');
+    $('input[title^="Date"]').closest('table').css('table-layout', 'fixed');
+ 
+    console.log('input val = ',  $('input[title^="Title"]').val());
+    $('input[id^="Title"]').val('_');
+
+    $($('#idAttachmentsTable').closest('td')[0]).css('width', '100%');
+    $('#AttachmentsButton').closest('div').css('float', 'unset');
+    //Comment this line to show the hidden fields
+    $('span[id="Action"]').closest('table').hide();
+    $('#onetIDListForm').next().css('float', 'right');
+  
+    $($('#part1 input[name$="SaveItem"]')[1]).css('font-size', 'larger');
+    $($('#part1 input[name$="GoBack"]')[1]).css('font-size', 'larger');
+
+    $('input[value="Save"]').closest('table.ms-formtoolbar').css('position', 'absolute');
+    $('input[value="Save"]').closest('table.ms-formtoolbar').css('right', '2%');
+    $('input[value="Save"]').css('margin-bottom', '20px');
+    $('input[value="Save"]').css('color', 'white');
+    $('input[value="Save"]').css('background-color', 'green');
+    $('input[value="Save"]').css('border-color', 'green');
+    $('input[value="Save"]').css('border-radius', '10px');
+    $('input[value="Cancel"]').css('color', 'white');
+    $('input[value="Cancel"]').css('background-color', 'red');
+    $('input[value="Cancel"]').css('border-color', 'red');
+    $('input[value="Cancel"]').css('border-radius', '10px');
+    $('input[value="Save"]').closest('td.ms-toolbar').prev().prev().css('display', 'none');
+
+    $('input[value="Attachment(s)"]').css('color', 'white');
+    $('input[value="Attachment(s)"]').css('background-color', 'orange');
+    $('input[value="Attachment(s)"]').css('border-color', 'orange');
+    $('input[value="Attachment(s)"]').css('border-radius', '10px');
+    $('input[value="Attachment(s)"]').addClass('clickable');
+
+    $('input[value="Save"]').addClass('clickable');
+    $('input[value="Cancel"]').addClass('clickable');
+    $('#AttachmentsArea').append($('tr[id="idAttachmentsRow"]'));
+}
+
+// This is for all the JQUERY events
+function setupEventHooks(){
+    //Handle Position Drop Down Change
+    $('.PosSelect').on('change', function () {
+        console.log('select changed ', $(this).val());
+        if ($(this).val() == "") {
+            //need to empty out the fields
+            $(this).closest('tr').find('.NameField').text('');
+        }else {
+            //fill out according to id
+            $(this).closest('tr').find('.NameField').text($(this).val());
+        }
+    });
+
+    //Handle Template Drop Down Change
+    $('#rTemplates').on('change', function () {
+        console.log('change ', $(this).val());
+        var targetValue = $(this).val();
+        var targetTemplate = Templates.filter(function (v) {
+            return v.Title == targetValue;
+        });
+
+        if (targetTemplate.length > 0) {
+            console.log('template found ', targetTemplate[0]); //split JSON down
+
+            $('textarea[title^="Purpose"]').val(targetTemplate[0].Purpose);
+            $('textarea[title^="Background"]').val(targetTemplate[0].Background);
+            $('textarea[title^="Discussion"]').val(targetTemplate[0].Discussion);
+            $('textarea[title^="Recommendation"]').val(targetTemplate[0].Recommendation);
+            $('input[title^="Subject"]').val($(this).val());
+            var ActionList = targetTemplate[0].Routes.map(function(v){return v.SelectedAction});
+            var allTo = $('.PosSelect');
+            var allAction = $('.ActionSelect'); //fill in the To's
+
+            $.each(targetTemplate[0].Routes.map(function(v){return v.SelectedTo}), function (i, v) {
+                console.log('tempalte v ', v);
+                //look through my contact id for match
+                var targetContact = allContacts.filter(function(item){return item.Id == v});
+                if(targetContact.length>0){
+                    $(allTo[i]).find('option:contains(' + targetContact[0].To + ')').each(function () {
+                        if ($(this).text() == targetContact[0].To) {
+                            $(this).attr('selected', 'selected');
+                            $(this).trigger('change');
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+            });
+        
+            $.each(ActionList, function (i, v) {
+                console.log('tempalte v ', v);
+                $(allAction[i]).find('option:contains(' + v + ')').each(function () {
+                    if ($(this).text() == v) {
+                        $(this).attr('selected', 'selected'); //$(this).trigger('change');
+                        return false;
+                    }
+                    return true;
+                });
+            });
+        }
+    });
+
+
+    //Help make the Attachments area better - including on click open in new tab
+    $("table#idAttachmentsTable a").on('click', (function (event) {
+        console.log('aria ', $(this).attr('aria-label'));
+        if(typeof $(this).attr('aria-label') != 'undefined'){
+            if($(this).attr('aria-label').substring(0,6) !="Delete"){
+                console.log('link select');
+                event.preventDefault();
+                var url=$(this).attr('href');
+                window.open(url, '_blank');
+            }else{
+                console.log('delete clicked');
+            }
+        }else{
+            console.log('link select');
+            event.preventDefault();
+            var url=$(this).attr('href');
+            window.open(url, '_blank');
+        }
+    }));
+
+    $('#idAttachmentsTable').find('a').each(function(i,v){
+        console.log('aria ', $(v).attr('aria-label'));
+        if(typeof $(v).attr('aria-label') != 'undefined'){
+            if($(v).attr('aria-label').substring(0,6) !="Delete"){
+                $(v).attr('target', '_blank');
+                $(v).prop('rel', 'noopener noreferrer');
+                $(v).attr('data-interception', 'off');
+            }else{
+                console.log('delete clicked');
+            }
+        }else{
+            $(v).attr('target', '_blank');
+            $(v).prop('rel', 'noopener noreferrer');
+            $(v).attr('data-interception', 'off');
+            $(v).attr('onmousedown', '');
+            $(v).attr('onclick', '');
+        }
+    });
+    
+}
+
+//PreSave runs before the Form is saved
+function PreSaveAction() {
+    var filledPos = [];
+    var preventSave = false;
+    var isGap = false;
+    var gap;
+
+    //Loop through each PosSelect Routing Position checking
+    //   for gaps or bad data
+    $.each($('.PosSelect'), function (i, v) {
+        if ($(v).val() == "") {
+            isGap = true; //gap found
+            gap = $(v);
+        } else {
+            if (isGap) {
+                alert('WARNING, there is a gap in the routing. Please ensure all routing is complete without gaps.');
+                preventSave = true; //this will cause the form to NOT save
+                gap.closest('tr').addClass('alert'); //style the field so user knows there is an issue
+                return false;
+            }
+
+            if ($(v).closest('tr').find('.ActionSelect').find('option:selected').text() == "") {
+                alert('WARNING, an ACTION for a routing position is not selected. Please select the correct ACTION for that routing step.');
+                $(v).closest('tr').addClass('alert'); //style the field so user knows there is an issue
+                preventSave = true; //this will cause the form to NOT save
+                return false;
+            }
+
+            var sigFieldText = '';
+            //Capture the Signature Field text (if it is used)
+            if ($(v).closest('tr').find('.SigField').find('button').length == 0) sigFieldText = $(v).closest('tr').find('.SigField').text(); 
+            
+            //remove alert class if it exised
+            $(v).closest('tr').removeClass('alert');
+
+            //format the data so we can easily store it in JSON format in the JSON field
+            filledPos.push({
+                'Pos': $(v).find('option:selected').text(),
+                'Action': $(v).closest('tr').find('.ActionSelect').find('option:selected').text(),
+                'NameField': $(v).closest('tr').find('.NameField').text(),
+                'SigField': sigFieldText
+            });
+            console.log('filledpos ', filledPos[filledPos.length-1]);
+        }
+    });
+
+    //Store the JSON data as text in the JSON field
+    $('textarea[id^="JSON"]').val(JSON.stringify(filledPos));
+
+    //This saves the Position (ContactsID) for each route into the
+    //  Pos1, Pos2 etc drop downs
+
+    //Reset all Pos values 
+    for (var i = 0; i < 10; i++) {
+        $($('select[title^="Pos"]')[i]).val('0');
+    }
+    
+    //now Set the Pos values correctly so it is saved properly
+    $.each(filledPos, function (i, v) {
+        console.log('v.Pos ', v.Pos);
+        console.log('found select as ', $($('select[title^="Pos"]')[i])); 
+
+        $($('select[title^="Pos"]')[i]).find('option:contains(' + v.Pos + ')').each(function () {
+            if ($(this).text() == v.Pos) {
+                $($('select[title^="Pos"]')[i]).val($(this).val());
+                $(this).attr('selected', 'selected');
+                return false;
+            }
+
+            return true;
+        });
+    });
+    // This ends filling out the Pos[] drop downs
+
+    //our maxRoutes is equal to the amount of filled positions in our route
+    //  make sure that number is saved
+    $('input[id^="MaxRoutes"]').val(filledPos.length);
+    
+    console.log('preSave returning ', !preventSave);
+
+    return !preventSave;
+}
+
+// Setup the Routing Templates
+function setupRoutingTemplates() {
+    //Empty the Templates Drop Down
+    $('#rTemplates').empty();
+    //Set an initial value of Manual
+    $('#rTemplates').append(new Option('Manual', ''));
+        //RoutingList/Id,RoutingList/Title&$expand=RoutingList
+    SPHGetListItems(listNames[1], '?$select=Id,Title,Purpose, Background, Discussion, Recommendation, JSON', siteURL).done(function (data) {
+        console.log('Pulling data from %s : %o ', listNames[1], data);
+        //Mutating Template data so that the Template Drop Down can later use it
+        $.each(data, function (i, v) {
+            Templates.push({
+                'Title': v.Title,
+                'Purpose': v.Purpose,
+                'Background': v.Background,
+                'Discussion':v.Discussion,
+                'Recommendation':v.Recommendation,
+                'Routes': JSON.parse(v.JSON).map(function (i) {
+                    return {
+                        'Pos':i.Pos,
+                        'SelectedTo':i.SelectedTo,
+                        'SelectedAction':i.SelectedAction
+                    }
+                }),
+                'JSON': v.JSON
+            });
+            $('#rTemplates').append(new Option(v.Title, v.Title)); //add info to the Routing Templates Select
+        });
+        console.log('Template data: ', Templates);
+    });
+}
+
+// This kicks off when the User clicks Sign
+function SignRoute(e) {
+    //capture the logged in user
+    var loggedInUser = _spPageContextInfo.userDisplayName;
+    //get the closest div
+    var targetDiv = $($(e).closest('div'));
+    //make sure it is empty (this removes the button)
+    targetDiv.empty();
+    //Now fill it in with the loggedInUser name
+    targetDiv.text(loggedInUser);
+    //Next ensure that Sig[CurrentRoute] text field captures the user name as well. This is important as a lot of logic
+    //  is based on the Sig fields
+    $($('input[title^="Sig"')[$('input[id^="CurrentRoute"]').val() - 1]).val(loggedInUser);
+
+    //Alert the user that they need to actually save the form for it to be complete
+    alert('Thank you for Signing the eRouting Form. Please click the Save button at the bottom of the Form. Note that your saved changes may take a couple of minutes to reflect on the main page.');
+}
+
+// Setup the eSSS top portion
+function setupRoutingContacts() {
+    var allActions = [];
+
+    //Grab and store all the possible choices from our Action Field
+    $('select[title="Action"]').find('option').each(function () {
+        allActions.push($(this).val());
+    });
+
+    //First we empty from our ActionSelection Routing Actions
+    // Then we create a blank position
+    $.each($('.ActionSelect'), function (i, v) {
+        $(v).empty();
+        $(v).append(new Option("", ""));
+    });
+
+    //Now disperse those actions inte each of our ActionSelect Routing Actions
+    $.each($('.ActionSelect'), function (i, v) {
+        $.each(allActions, function (ii, vv) {
+            $(v).append(new Option(vv, vv));
+        });
+    }); 
+
+  allPos = {}; //empty
+
+    //New we empty from our PosSelection Routing Positions
+    // Then create a blank position
+    $.each($('.PosSelect'), function (i, v) {
+        $(v).empty();
+        $(v).append(new Option("EMPTY", ""));
+    });
+
+
+    SPHGetListItems(listNames[0], '?$select=Id,Title,Person/Id,Person/Title&$expand=Person', siteURL).done(function (data) {
+        //Loop thround and fill out our PosSelection Routing Positions
+        //   based on the Contacts List of Positions
+        allContacts=[];
+        $.each(data, function (i, v) {
+            allContacts.push({'Id':v.Id, 'To':v.Title, 'Person':v.Person.Title});
+            $('.PosSelect').append(new Option(v.Title, v.Person.Title));
+        });
+
+        console.log('allContact ', allContacts);
+
+        //Determine if we are NOT in NewForm or not
+        if ($('textarea[id^="JSON"]').val() != '') {
+            console.log('We are not in NewForm, so we must load all saved data back into the eSSS form format.');
+            //read data in from all fields
+            var data = JSON.parse($('textarea[id^="JSON"]').val());
+            
+            $.each(data, function (i, v) {
+                console.log('JSON data =', v);
+
+                $($('.PosSelect')[i]).val(v.NameField).change();
+
+                $($('.PosSelect')[i]).find('option:contains(' + v.Pos + ')').each(function () {
+                    if ($(this).text() == v.Pos) {
+                        $(this).attr('selected', 'selected');
+                        $(this).prop('selected', 'selected');
+                        $(this).trigger('change');
+                        $($(this).closest('tr').find('.ActionSelect')[0]).val(v.Action);
+                        return false;
+                    }
+                    return true;
+                }); 
+
+                if (v.SigField) {
+                    console.log('sig field detected');
+                    $($('.SigField')[i]).text(v.SigField); //ensure name matches sig by copying it over
+                    $($('.SigField')[i]).prev().text(v.SigField);
+                }
+            });
+
+            //If there is a next Route, make sure Sig button shows up
+            if($('input[id^="CurrentRoute"]').val() <= $('input[id^="MaxRoute"]').val()){
+                if ($($('input[title^="Sig"]')[$('input[id^="CurrentRoute"]').val() - 1]).val() == "") {
+                    $($('.SigField')[$('input[id^="CurrentRoute"]').val() - 1])
+                        .append('<button type="button" onclick="SignRoute(this);" class="sigButton clickable">SIGN HERE</button>');
+                        $($('.SigField')[$('input[id^="CurrentRoute"]').val() - 1])
+                        .append('<button type="button" onclick="openCommentModal(); return false;" title="Add Comment & Return to AO" class="commentButton clickable"><i class="fa fa-share-square" style="color:red;"></i></button>');
+                }
+                $($('.PosSelect')[$('input[id^="CurrentRoute"]').val() - 1]).closest('tr').addClass('highlightRow');
+            }
+        }
+    }).fail(function (e) {
+        alert('Failed Getting List Columns! ',e.responseText);
+    });
+}
+
+function openCommentModal(){
+    $("#commentModal").modal({escapeClose:false, clickClose:false,showClose:false, fadeDuration: 100});
+}
+
+function saveComments(){
+    $('textarea[title^="Comments"]').val($('#commentArea').val())
+    $.modal.close(); 
+}
+
+</script>

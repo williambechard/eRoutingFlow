@@ -1,0 +1,749 @@
+<!-- Script References / JS Libraries and CSS -->
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script lang="javascript" src="/teams/23840/SiteAssets/Scripts/SPHelper_v4.js"></script> <!--This will need to be your local path (IE wherever you stored this file in SP)-->
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/w3-css/4.1.0/w3.min.css">
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
+<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- You will need to adjust the paths above to your enviornment/script location -->
+<style>
+    *,*:before,*:after{
+        box-sizing: unset!important;
+    }
+
+    .dataTables_scrollFoot{
+        overflow: unset!important;
+    }
+
+html.w3, body.w3{
+    font-size:unset;
+}
+
+
+#contentBox{
+	margin-left:auto;
+	margin-right:auto;
+}
+
+#sideNavBox{
+	display:none;
+}
+.eRoutingProgress{
+    width:-webkit-fill-availabe;
+    height:30px;
+}
+textarea {
+  resize: none;
+}
+
+/* Center the loader */
+.loader {
+  position:fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+.chosen-container{
+    width:-webkit-fill-available!important;
+    cursor: pointer;
+}
+.dataTables_filter{
+    margin-bottom:10px;
+}
+.greyOut{
+    position: absolute;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,.25);
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#modalRouting{
+    padding:2%;
+}
+.fullHeight{
+    height:100%;
+}
+ 
+.eSSSTable td{
+    border: 1px solid black;
+ 
+}
+
+.eSSSTable tbody > tr > td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow:hidden;
+}
+
+.eSSSTable th{
+    border:1px solid black;
+    background-color:gainsboro;
+}
+
+.eSSSTable tr:hover{
+    background-color: yellow!important;
+}
+
+.stretchDiv div{
+    display: inline-block;
+}
+.eSSSLabel{
+ width:100%;
+ background-color: gainsboro;
+}
+
+.eSSSInput{
+    width:96%;
+}
+.matchWidth{
+    width:-webkit-fill-available;
+    height:170px;
+}
+
+.bodyHeight{
+   height:200px;
+}
+ 
+.mouseHand:hover{
+    cursor:pointer;
+}
+
+
+.posButton{
+    background-color: limegreen;
+    border: 1px solid green;
+    color:white;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-bottom:1%;
+}
+
+.negButton{
+    background-color: orangered;
+    border: 1px solid red;
+    color:white;
+}
+#contactsTemplate{
+    display:none;
+}
+.contactRow{
+    white-space: nowrap;
+    font-size: small;
+}
+.eSSSContactsTable{
+    table-layout: fixed;
+}
+
+.clickable{
+    cursor:pointer;
+}
+
+.clickable:hover{
+    color:black!important;
+}
+button:hover{
+    cursor: pointer;
+}
+.adminArea{
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+}
+.adminOnly{
+    margin-top:10px;
+    background-color: #F5F5F5;
+}
+
+.btn:hover{
+    background-color: grey!important;
+}
+.btn{
+    min-width:40px!important;
+    max-width:40px;
+}
+.lastDiv{
+    width:80%;
+    display:inline-block;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eSSSHeading{
+    font-size: xx-large;
+    font-weight: bolder;
+}
+.ms-dlgOverlay{
+    height:unset!important;
+    width:auto!important;
+ }
+
+
+</style>
+
+
+
+<div class="w3-center eSSSHeading">eSSS Routing</div>
+<button type="button" class="w3-blue btn" onclick="SetupRoutingsTable();" style="min-width:40px; border:1px solid blue; border-radius:10px; margin-bottom:1%; float:left; display:inline-block;"><i class="fa fa-refresh"></i></button>
+<button id="newRouteForm" type="button" class="posButton btn" style="float:right;"><i class="fa fa-plus" aria-hidden="true"></i></button>
+
+<div>
+    <table id="dt" class="w3-table-all eSSSTable" list="">
+        <thead><tr></tr></thead>
+        <tbody></tbody>
+        <tfoot><tr></tr></tfoot>
+    </table>
+</div>
+
+<div class="w3-container adminOnly">
+    <div class="w3-center" style="font-size:xx-large; font-weight: bolder; color:darkblue; margin-bottom:2%;">Admin Area</div>
+    <div class="w3-container adminArea w3-card w3-white" style="margin-bottom:1%;">
+        <div class="w3-container" style="width: 50%;">
+            <div class="w3-container" style="padding:2%; overflow-y:auto; overflow-x:hidden; max-height:70%;">
+                <div class="w3-center eSSSHeading">Position/Contacts</div>
+                <button type="button" class="w3-blue btn" onclick="SetupContactsTable();" style="min-width:40px; border:1px solid blue; border-radius:10px; margin-bottom:1%; float:left; display:inline-block;"><i class="fa fa-refresh"></i></button>
+                <button id="newContact" type="button" class="posButton btn" style="float:right; display:inline-block;"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                <table id="dtContacts" class="w3-table-all eSSSContactsTable eSSSTable" list="" style="font-size: small;">
+                    <thead><tr></tr></thead>
+                    <tbody id="contactsArea"></tbody>
+                    <tfoot><tr></tr></tfoot>
+                </table>
+            </div>7
+        </div>
+        <div class="w3-container" style="width:50%;">
+            <div class="w3-center eSSSHeading">Templates</div>
+            <button type="button" class="w3-blue btn" onclick="SetupTemplatesTable();" style="min-width:40px; border:1px solid blue; border-radius:10px; margin-top:4%; margin-bottom:1%; float:left; display:inline-block;"><i class="fa fa-refresh"></i></button>
+            <button type="button" id="newTemplate" class="posButton btn" style="border:1px solid green; border-radius:10px; margin-top:4%; float:right; margin-bottom:1%;"><i class="fa fa-plus" aria-hidden="true"></i></button>
+            <table id="dtTemplates" class="w3-table-all eSSSTable" list="" style="font-size: small;">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+                <tfoot><tr></tr></tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// store the location of this script to be used later
+var siteURL = _spPageContextInfo.webAbsoluteUrl;
+var ContactsListGUID='';
+ 
+
+// This program uses 3 lists:
+//      eRouting: Main list that will hold the Routing info for each Request. This is where attachments will be loaded, and what will emulate the look of a paper eSSS
+//      eContacts: Simple list that pairs a Position and a Member. This info is then used in eRouting (and in the Templates)
+//      eTemplates: List that pre-fills out the Routing info, ensuring standardization and making the routing of a new request easier
+var targetLists = [
+  {
+    'TargetListName':'eRoutingContacts',
+    'Fields': [
+      {'Name':'Person', 'DisplayName':'Person', 'Type':'User'}
+    ]
+  },
+  {
+    'TargetListName':'eRoutingTemplates',
+    'Fields': [
+      {'Name':'RoutingList', 'Type':'LookupMulti', 'ShowField':'Title', 'DisplayName':'RoutingList', 'Mult':'TRUE', 'RelationshipDeleteBehavior':'None',  'List':''},
+      {'Name':'JSON', 'DisplayName':'JSON', 'Type':'Note'},
+      {'Name':'Purpose', 'DisplayName':'Purpose', 'Type':'Note'},
+      {'Name':'Background', 'DisplayName':'Background', 'Type':'Note'},
+      {'Name':'Discussion', 'DisplayName':'Discussion', 'Type':'Note'},
+      {'Name':'Recommendation', 'DisplayName':'Recommendation', 'Type':'Note'}
+    ]
+  },
+  {
+    'TargetListName':'eRouting',
+    'Fields': [
+      {'Name':'Title', 'DisplayName':'Title', 'Type':'Text', 'Required':'FALSE'},
+      {'Name':'JSON', 'DisplayName':'JSON', 'Type':'Note'},
+      {'Name':'Action', 'DisplayName':'Action', 'Type':'Choice', 'Choice':['Review/Coord','Review/Sign'], 'Default':'Review/Coord'},
+      {'Name':'AO', 'DisplayName':'AO', 'Type':'User', 'Required':'TRUE'},
+      {'Name':'Symbol', 'DisplayName':'Symbol', 'Type':'Choice', 'Choice':['ORG_1','ORG_2'], 'Default':'ORG_1'},
+      {'Name':'Phone', 'DisplayName':'Phone', 'Type':'Text' , 'Required':'TRUE', 'MaxLength':'12'},
+      {'Name':'Initials', 'DisplayName':'Initials', 'Type':'Text', 'Required':'TRUE'},
+      {'Name':'Suspense', 'DisplayName':'Suspense', 'Format':'DateOnly','Type':'DateTime', 'Required':'TRUE'},
+      {'Name':'Date', 'DisplayName':'Date', 'Format':'DateOnly', 'Type':'DateTime', 'Required':'TRUE', 'Default':'[today]'},
+      {'Name':'Subject', 'DisplayName':'Subject', 'Type':'Text', 'Required':'TRUE'},
+      {'Name':'MaxRoutes', 'Min':'1', 'Max':'10', 'Decimals':'0', 'DisplayName':'MaxRoutes', 'Type':'Number'},
+      {'Name':'CurrentRoute', 'Min':'0', 'Max':'10', 'Decimals':'0', 'DisplayName':'CurrentRoute', 'Type':'Number', 'Default':'0'},
+      {'Name':'Sig1', 'DisplayName':'Sig1', 'Type':'Text'},
+      {'Name':'Sig2', 'DisplayName':'Sig2', 'Type':'Text'},
+      {'Name':'Sig3', 'DisplayName':'Sig3', 'Type':'Text'},
+      {'Name':'Sig4', 'DisplayName':'Sig4', 'Type':'Text'},
+      {'Name':'Sig5', 'DisplayName':'Sig5', 'Type':'Text'},
+      {'Name':'Sig6', 'DisplayName':'Sig6', 'Type':'Text'},
+      {'Name':'Sig7', 'DisplayName':'Sig7', 'Type':'Text'},
+      {'Name':'Sig8', 'DisplayName':'Sig8', 'Type':'Text'},
+      {'Name':'Sig9', 'DisplayName':'Sig9', 'Type':'Text'},
+      {'Name':'Sig10', 'DisplayName':'Sig10', 'Type':'Text'},
+      {'Name':'Complete', 'DisplayName':'Complete', 'Type':'Choice', 'Choice':['Yes','No'], 'Default':'No'},
+      {'Name':'Purpose', 'DisplayName':'Purpose', 'Type':'Note'},
+      {'Name':'Background', 'DisplayName':'Background', 'Type':'Note'},
+      {'Name':'Discussion', 'DisplayName':'Discussion', 'Type':'Note'},
+      {'Name':'Recommendation', 'DisplayName':'Recommendation', 'Type':'Note'},
+      {'Name':'Comments', 'DisplayName':'Comments', 'Type':'Note'},
+      {'Name':'Pos1', 'DisplayName':'Pos1', 'Type':'Lookup', 'ShowField':'Title', 'Mult':'FALSE', 'RelationshipDeleteBehavior':'None',  'List':''},
+      {'Name':'Pos2', 'DisplayName':'Pos2', 'Type':'Lookup', 'ShowField':'Title', 'Mult':'FALSE','RelationshipDeleteBehavior':'None',  'List':''},
+      {'Name':'Pos3', 'DisplayName':'Pos3', 'Type':'Lookup', 'ShowField':'Title', 'Mult':'FALSE','RelationshipDeleteBehavior':'None',  'List':''},
+      {'Name':'Pos4', 'DisplayName':'Pos4', 'Type':'Lookup', 'ShowField':'Title', 'Mult':'FALSE','RelationshipDeleteBehavior':'None',  'List':''},
+      {'Name':'Pos5', 'DisplayName':'Pos5', 'Type':'Lookup', 'ShowField':'Title', 'Mult':'FALSE','RelationshipDeleteBehavior':'None',  'List':''},
+      {'Name':'Pos6', 'DisplayName':'Pos6', 'Type':'Lookup', 'ShowField':'Title', 'Mult':'FALSE','RelationshipDeleteBehavior':'None',  'List':''},
+      {'Name':'Pos7', 'DisplayName':'Pos7', 'Type':'Lookup', 'ShowField':'Title', 'Mult':'FALSE','RelationshipDeleteBehavior':'None',  'List':''},
+      {'Name':'Pos8', 'DisplayName':'Pos8', 'Type':'Lookup', 'ShowField':'Title', 'Mult':'FALSE','RelationshipDeleteBehavior':'None',  'List':''},
+      {'Name':'Pos9', 'DisplayName':'Pos9', 'Type':'Lookup', 'ShowField':'Title', 'Mult':'FALSE','RelationshipDeleteBehavior':'None',  'List':''},
+      {'Name':'Pos10', 'DisplayName':'Pos10', 'Type':'Lookup', 'ShowField':'Title','Mult':'FALSE', 'RelationshipDeleteBehavior':'None',  'List':''},
+    ]
+  }
+];
+
+// 1. Entry Point
+// Document Ready function, the start of the program 
+// - this gets called FIRST after everything in the DOM is loaded
+$(document).ready(function () {
+    console.log('DOM is done. Document Ready event has been called.');
+    console.log('site URL =', siteURL);
+    //once sp.js is loaded we need to see if our 3 lists have already been created
+    ExecuteOrDelayUntilScriptLoaded(listCheck, "sp.js"); 
+
+    //Setup the Click events for the Add buttons on the page
+    $('#newContact').on('click', function(){ openSPModal(siteURL + '/Lists/' + targetLists[0].TargetListName + '/NewForm.aspx' , 'New Contact', 600, 300, false)});
+    $('#newTemplate').on('click', function(){ openSPModal(siteURL + '/Lists/' + targetLists[1].TargetListName + '/NewForm.aspx' , 'New Template', 1920, 1080, false)});
+    $('#newRouteForm').on('click', function(){ openSPModal(siteURL+ '/Lists/'+ targetLists[2].TargetListName +'/NewForm.aspx', 'New e-Routing', 1920, 1080, false)});
+
+    //Embed the list names into the data tables so the onclick can know which List to use
+    $('#dt').attr('list', targetLists[2].TargetListName);
+    $('#dtTemplates').attr('list', targetLists[1].TargetListName);
+    $('#dtContacts').attr('list', targetLists[0].TargetListName);
+
+    //Attempt to get page title by breaking down the url
+    var pageTitle = window.location.pathname.split('.aspx')[0].split('/')[window.location.pathname.split('.aspx')[0].split('/').length-1];
+    $('a[title="'+pageTitle+'"]').hide(); //and then hide it
+});
+
+// 2. Check for Lists and Create them if not already at site
+//This check for required lists (based on the targetLists array), and if they dont exist creates them
+function listCheck() {
+  var allListPromises = []; //create an array to store all of our list promises  
+  var allFieldPromises = []; //create an array to store all our list field promises 
+  // Note the promises are separated between lists and fields to ensure that the one
+  //   array is done (the list creation), before we start on our field creation (for those lists)
+
+  // Get a listing of all lists at the site 
+  SPHAllLists().done(function (lists) {
+    var allLists = []; //array of strings of the list names at the site
+
+    //This code block unwrapes our array of all Lists at the site
+    var le = lists.getEnumerator();
+    var lResolve = [];
+    while (le.moveNext()) {
+      // and stores then in the array allLists 
+      allLists.push(le.get_current().get_title());
+    }
+    console.log("listCheck(): We First need to Discover the names of all Lists at the chosen site.", allLists);
+
+    var toDo = [];
+    console.log('Next we Check all Lists that were found against our Lists that are Required:', targetLists);
+    // Loop through each list name from our global variable. These are the list names that
+    //   we are checking if exists
+    $.each(targetLists, function (i, list) {
+      console.log('Checking for List: ', list.TargetListName);
+      var listName = list.TargetListName;
+      // check if our list name does NOT exist in our site lists 
+      if (allLists.indexOf(listName) == -1) {
+        //If so we add it as a list name that we need to create 
+        toDo.push(listName); //push the name
+        console.log("List %s does not exist. Adding it to our toDo array to create.", listName);
+      }else console.log("List %s was discovered! No further action for that List needed.", listName);
+    });
+
+    if (toDo.length > 0) {
+      // Loop through each list Name in our array
+      $.each(toDo, function (i, v) {
+        //Create our list and add it to our array of promises 
+        allListPromises.push(
+          createSPList(v).done(function (data) {
+            console.log("List %s created. ", v);
+          }).fail(function (e) { console.error('Failed creating %s list! %o ', v, e); }));     
+      });
+
+      //When we are done with our list creation(s)
+      $.when.apply($, allListPromises).done(function (d) {
+        console.log('All Lists have been created (or verified to exist). Next we need to add the Required Fields to the Lists that were Created');
+        //first we need to provide the GUID to any properties that may need it
+        SPHListGUID(targetLists[0].TargetListName, siteURL).done(function(GUID){
+          targetLists.map(function(list){
+            $.each(list.Fields.filter(function(v){ return v.hasOwnProperty('List');}), function(i,v){
+              v.List = '{' + GUID + '}';
+            });
+          });
+
+          //we again Loop through each list Name in our array
+          $.each(toDo, function (i, v) {
+            console.log('looping through our list and adding the fields ', v);
+            //now add the fields  
+            var targetL = targetLists.filter(function(item){return item.TargetListName==v});
+            if(targetL.length>0){
+              console.log('extracted the object from our targetLists ', targetL);
+              console.log('Fields to add to the list: ',targetL[0].Fields);
+              allFieldPromises.push(
+                SPHAddFieldToList(v, targetL[0].Fields, siteURL).done(function () { 
+                  console.log('created Fields');}).fail(function (e) { console.error('Failed creating fields! ',e); })
+              );                
+            }            
+          });
+
+          $.when.apply($, allFieldPromises).done(function (d) {
+            console.log('All Lists are Created/Verified and all Fields have been added. Now running initSetup'); 
+              //we need to modify all Items so that it only shows the columns we want,
+              //   this is b/c of a limit with Power Automate
+              modifyListView(targetLists[2].TargetListName).done(function(data){ 
+                console.log('Modified List AllItems View', data);
+                initSetup();
+              });
+          });
+        });
+      });
+    } else {
+      console.log("Required lists already exist. %o proceeding to initSetup();", targetLists.map(function(i){return i.TargetListName}));
+      initSetup();
+    }
+  }).fail(function (e) { alert('Failed creating our initial List! ' + targetLists.map(function(i){return i.TargetListName}).join(',') + e.responseText); });
+}
+
+//3. Pull data from our lists and Create our Data Tables
+function initSetup(){
+
+  SetupRoutingsTable();
+  SetupTemplatesTable();
+  SetupContactsTable();
+
+}
+
+//4. Setup the Contacts Table (both Init and Create)
+function SetupContactsTable(){
+  //get routingContacts from list
+  SPHGetListItems(targetLists[0].TargetListName, '?$select=Id,Title,Person/Id,Person/Title&$expand=Person', siteURL).done(function (data) {
+    console.log('data from the %s list: %o ', targetLists[0].TargetListName, data);
+    // Mutate the data for the format that the DataTable can use
+    var newData = data.map(function (i) {
+      return {
+        "Position": i.Title,
+        "Member": i.Person.Title,
+        "Id": i.Id
+      };
+    });
+    console.log('List %s now formatted for the DataTable: %o ', targetLists[0].TargetListName,  newData);
+    if(! $.fn.DataTable.isDataTable($('#dtContacts'))) createDataTable('dtContacts', newData, ['Position', 'Member']);
+    else{
+      $('#dtContacts').dataTable().fnClearTable();
+      if (newData.length > 0) $('#dtContacts').dataTable().fnAddData(newData);
+    }
+  }).fail(function (e) {
+    alert('Failed Getting List Items! ' + e.responseText);
+  });
+}
+
+//5. Setup the Templates Table (both Init and Create)
+function SetupTemplatesTable(){
+  //eRoutingTemplates
+  SPHGetListItems(targetLists[1].TargetListName, '?$select=Id,JSON,Title,RoutingList/Id, RoutingList/Title&$expand=RoutingList', siteURL).done(function (data) {
+    console.log('data from the %s list: %o ', targetLists[1].TargetListName, data);
+    // Mutate the data for the format that the DataTable can use
+    var newData = data.map(function (i) {
+      var allRoutes = [];
+      $.each(i.RoutingList.results, function (i, v) {
+        allRoutes.push(v.Title);
+      });
+      console.log('i = ', allRoutes);
+      return {
+        "Title": i.Title,
+        "Routing": allRoutes,
+        "Id": i.Id
+      };
+    });
+    console.log('List %s now formatted for the DataTable: %o ', targetLists[1].TargetListName,  newData);
+    if(! $.fn.DataTable.isDataTable($('#dtTemplates'))) createDataTable('dtTemplates', newData, ['Title', 'Routing']);
+    else{
+      $('#dtTemplates').dataTable().fnClearTable();
+      if (newData.length > 0) $('#dtTemplates').dataTable().fnAddData(newData);
+    }
+  }).fail(function (e) {
+    alert('Failed Getting %s List Items! %o', targetLists[1].TargetListName, e.responseText);
+  });
+}
+
+//6. Setup the Routings Table (both Init and Create)
+function SetupRoutingsTable(){
+  //eRouting List
+  SPHGetListItems(targetLists[2].TargetListName, '?$select=Id,JSON,Symbol,Phone,CurrentRoute,MaxRoutes,Initials,Suspense,Date,Subject,Complete,AO/Id,AO/Title&$expand=AO', siteURL).done(function (data) {
+    console.log('data from the %s list: %o ', targetLists[2].TargetListName, data);
+    // Mutate the data for the format that the DataTable can use
+    var newData = data.map(function (i) {
+      return {
+        "AO": i.AO.Title,
+        "Symbol": i.Symbol,
+        "Date": i.Date.split('T')[0],
+        "Subject": i.Subject,
+        "CurrentRoute": i.CurrentRoute,
+        "MaxRoutes": i.MaxRoutes,
+        "Complete": i.Complete,
+        "Progress": '<progress class="eRoutingProgress" value="'+i.CurrentRoute+'" max="'+ (i.MaxRoutes+1)+ '">' + i.CurrentRoute / (i.MaxRoutes+1) + '</progress>',
+        "Id": i.Id
+      };
+    });
+    console.log('List %s now formatted for the DataTable: %o ', targetLists[2].TargetListName,  newData);
+    
+    if(! $.fn.DataTable.isDataTable($('#dt'))) createDataTable('dt', newData, ['AO', 'Symbol', 'Subject', 'Date', 'Progress', 'Complete']);
+    else{
+      $('#dt').dataTable().fnClearTable();
+      if (newData.length > 0) $('#dt').dataTable().fnAddData(newData);
+    }
+    
+  
+  }).fail(function (e) {
+    alert('Failed Getting %s List Items! %o', targetLists[2].TargetListName, e.responseText);
+  });
+
+}
+
+//7. Helps Delete Item from DataTable (and List)
+function removeItem(e) {
+  var id = $(e).closest('tr').attr('spid');
+  var list = $(e).closest('table').attr('list'); //console.log($(e));
+
+  if (confirm('Ok to remove item, otherwise please select Cancel')) {
+    SPHDeleteListItem(list, id, siteURL).done(function (data) {
+      //item successfully deleted
+      //window.location.reload(true);
+      if (list == targetLists[0].TargetListName) {
+        SetupContactsTable();
+      } else if (list == targetLists[1].TargetListName) {
+        SetupTemplatesTable();
+      } else if (list == targetLists[2].TargetListName) {
+        SetupRoutingsTable();
+      }
+    }).fail(function (e) {
+      alert('Failed Deleting Item! ' + e.responseText);
+    });
+  }
+}
+
+//8. Helper for creating the DataTable(s)
+function createDataTable(targetElem, Data, Columns) {
+  var cData = Columns.map(function (v) {
+    //ensure that all data has a prop for every column
+    $.each(Data, function (item, value) {
+      if (!value.hasOwnProperty(v)) value[v] = '';
+    }); //now if the column has formatting, include that as well
+    // first determine if there is any formatting for this column
+
+    return {
+      'mData': v
+    };
+  });
+  console.log('cData = ', cData);
+  var targetTable = $('#' + targetElem); //create the Header/Footer
+
+  var tableHeader = targetTable.find('thead').find('tr');
+  var tableFooter = targetTable.find('tfoot').find('tr'); //only need to do 1x b/c it is the header/footer
+
+  $.each(Columns, function (index, value) {
+    tableHeader.append('<th>' + value + '</th>');
+    tableFooter.append('<th>' + value + '</th>');
+  }); //create the actual data table
+
+  try {
+    targetTable.DataTable({
+      "bAutoWidth": true,
+      //we want to control the width of our columns specifically, if we were ok with a standardard width we could set this to true
+      "aaData": Data,
+      //this is the ajax data that we are passing in
+      "aoColumns": cData,
+      'rowCallback': function rowCallback(row, data) {
+        $($(row)[0]).attr('SPID', data.Id);
+        $($(row)[0]).addClass('mouseHand');
+  
+
+        if ($($($(row)[0]).find('td:last')[0]).find('.lastDiv').length == 0) {
+          $($($(row)[0]).find('td:last')[0]).wrapInner('<div class="lastDiv"></div>');
+          $($($(row)[0]).find('td:last')[0]).append('<div class="deleteBTN" style="float:right" type="button" onclick="removeItem(this); return false;"><i style="color:red;" class="clickable fa fa-times fa-2x"></i></div>');
+        }
+      },
+      initComplete: function initComplete() {
+        if (typeof checkIsAdmin == 'function') {
+          //console.log('admin detected');
+          $('.adminOnly').show();
+        } else {//not an admin so do nothing
+        }
+
+        this.api().columns().every(function (index) {
+          //if(index!=0){
+          //console.log('column = ', $(this));
+          var column = this;
+          var select = $('<select data-placeholder="Filter" size="2" multiple class="chosen-select"><option value=""></option></select>').appendTo($(column.footer()).empty()).on('change', function () {
+            var v2 = [];
+            v2 = $(this).val();
+            console.log('value = ', v2.join('|'));
+            var val = v2.join('|'); //val =  val.replace(/,/g, '|'); <- worked before
+            //remove leading white space so reg ex doesn't get confused
+
+            val = val.replace(/^\s/g, ""); //remove trailing white space so reg ex doesn't get confused
+
+            val = val.replace(/\s$/g, ""); //console.log('val = ', val);
+
+            console.log('searching for ', val);
+            column.search(val ? '^' + val + '$' : '', true, false).draw();
+          });
+          select.attr('colName', $(this.header()).text());
+          column.data().unique().sort().each(function (d, j) {
+            //make special exception for dates as they need to be in a different format
+            //  check if on Eval Date Column
+            //if(index==8 || index==9){
+            // 	d = (moment(d).format('MMM-DD-YYYY'));
+            //}
+            select.append('<option value="' + d + '">' + d + '</option>');
+          }); //}
+        });
+      }
+    }); //console.error('allStyles', allStyles);
+
+    console.log('targetTable', targetTable);
+    var allSelect = $('.chosen-select');
+    console.log('allSelect = ', allSelect); //set All for the all value (is currently blank) of select drop downs
+    //(-1 due to the modal)
+
+    for (var i = 0; i < allSelect.length; i++) {
+      $.each($(allSelect[i]).find('option:first-child'), function (i, v) {
+        $(v).html('All');
+      });
+    }
+
+    $('#' + targetElem + '_wrapper').css('margin-top', '2%');
+    allSelect.chosen({ width: '100%!important'});
+
+    $('select[colname="Complete"]').val('No');
+    $('select[colname="Complete"]').trigger('chosen:updated').change();
+      targetTable.on('click', 'tbody tr', function(e) {
+      //console.log('API row values : ', targetTable.DataTable().row(this).data());
+      if (!$(e.target).is('button') && !$(e.target).is('i')) {
+            //e.stopPropagation();
+            console.log('etarget ', e); //if(e.target==$(row)){
+
+            console.log($(this).attr('spid'));
+            var SPID = $(this).attr('spid');
+            var listName = $(this).closest('table').attr('list');
+            
+            if(typeof SPID!='undefined'){
+              if(listName==targetLists[0].TargetListName)openSPModal( siteURL + '/Lists/' + listName +'/EditForm.aspx?&Id=' + SPID, listName, 600, 300, true);
+              else openSPModal( siteURL + '/Lists/' + listName + '/EditForm.aspx?&Id=' + SPID, listName, 1920, 1080, true); // }
+            }
+      }
+    });
+  } catch (e) {
+    console.log('error ' + e);
+  }
+}
+
+//Creates our list view for use with the Power Automate flow
+function modifyListView(listName){
+  var deferred = $.Deferred();
+  var ctx = new SP.ClientContext(siteURL);
+  var web = ctx.get_web();
+  var lists = web.get_lists();
+  var targetList = lists.getByTitle(listName);
+   
+  var viewCollection = targetList.get_views().getByTitle('All Items');
+ 
+  var fieldNames = viewCollection.get_viewFields();
+
+  ctx.load(viewCollection);
+  ctx.load(fieldNames);
+
+  ctx.executeQueryAsync(function(){
+    
+    var viewNewFields = ['ID', 'CurrentRoute', 'MaxRoutes','Complete',
+      '_x0053_ig1', '_x0053_ig2', '_x0053_ig3', '_x0053_ig4', '_x0053_ig5', '_x0053_ig6', '_x0053_ig7', '_x0053_ig8', '_x0053_ig9', '_x0053_ig10',
+      '_x0050_os1','_x0050_os2','_x0050_os3','_x0050_os4','_x0050_os5','_x0050_os6','_x0050_os7','_x0050_os8','_x0050_os9','_x0050_os10', 'Comments'];
+    // delete old fields
+    var fieldNamesCount = fieldNames.get_count();
+    console.log('fieldNamesCount ', fieldNamesCount);
+ 
+    for(var i = 0; i < fieldNamesCount;i++) {
+      var fName = fieldNames.getItemAtIndex(0);
+      console.log('field name = ', fName);
+      fieldNames.remove(fName);
+    }
+    
+    console.log('fieldNames = ', fieldNames);
+    // add new fields
+    for(var i = 0; i < viewNewFields.length;i++) {
+      fieldNames.add(viewNewFields[i]);
+    }
+
+    viewCollection.update(); 
+    ctx.executeQueryAsync(
+      function(){return deferred.resolve(viewCollection)}, 
+      function(sender, args){deferred.reject(sender, args.get_message() + '\n' + args.get_stackTrace())}
+    );
+  },function(sender, args){deferred.reject(sender, args.get_message() + '\n' + args.get_stackTrace());});
+
+  return deferred.promise();
+}
+
+function getListViews(){
+  var deferred = $.Deferred();
+    var ctx = new SP.ClientContext(siteURL);
+    var web = ctx.get_web();
+    var lists = web.get_lists();
+    var targetList = lists.getByTitle(targetLists[2].TargetListName);
+    var viewCollection = targetList.get_views();
+    ctx.load(viewCollection); 
+  
+    ctx.executeQueryAsync(
+      function(){
+        var oEnumerator = viewCollection.getEnumerator();
+          var viewNames = [];
+          while (oEnumerator.moveNext()) {
+            console.log("Title of the view: " + oEnumerator.get_current().get_title() + '\n');
+            viewNames.push(oEnumerator.get_current().get_title());
+          }
+
+          deferred.resolve(viewNames);
+        },
+      function(sender, args){deferred.reject(sender, args.get_message());}
+    );
+    return deferred.promise();
+}
+
+</script>
+
+<Where>
+  <In>
+    <FieldRef Name=ID />
+    <Values></Values>
+  </In>
+</Where>
